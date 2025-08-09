@@ -8,6 +8,10 @@
 
 - [View pt-br version](#template-nestjs-para-netlify)
 
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+</p>
+
 👋 **Welcome!**  
 This project is a **ready-to-use template** for building APIs with **NestJS** and running them in a **serverless** environment on [Netlify](https://www.netlify.com/).  
 The goal is to provide a clean, simple, and functional starting point so you can start quickly:  
@@ -139,6 +143,15 @@ export class AppController {
 ---
 
 # Template NestJS para Netlify
+<div style="display: flex; flex-direction: row; gap: 10px; align-items: center; margin-bottom: 20px;">
+  <img src="https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white">
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white">
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black">
+  <img src="https://img.shields.io/badge/Serverless-FD5750?style=for-the-badge&logo=serverless&logoColor=white">
+</div>
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+</p>
 
 👋 **Bem-vindo(a)!**  
 Este projeto é um **template pronto** para você criar APIs usando **NestJS** e rodá-las de forma **serverless** na plataforma [Netlify](https://www.netlify.com/).  
