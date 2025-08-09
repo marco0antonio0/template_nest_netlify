@@ -1,99 +1,271 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚀 NestJS Template for Netlify
+<div style="display: flex; flex-direction: row; gap: 10px; align-items: center; margin-bottom: 20px;">
+  <img src="https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white">
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white">
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black">
+  <img src="https://img.shields.io/badge/Serverless-FD5750?style=for-the-badge&logo=serverless&logoColor=white">
+</div>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+- [View pt-br version](#template-nestjs-para-netlify)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+👋 **Welcome!**  
+This project is a **ready-to-use template** for building APIs with **NestJS** and running them in a **serverless** environment on [Netlify](https://www.netlify.com/).  
+The goal is to provide a clean, simple, and functional starting point so you can start quickly:  
+- All endpoints are under `/api/...`
+- Comes with an example endpoint `/api/health` that returns the application status
+- Well-organized and easy-to-extend structure
 
-## Description
+---
+> ---
+>
+> Example: [https://template-nestjs.netlify.app/api/health](https://template-nestjs.netlify.app/api/health)
+>
+> ---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🚀 How to use this template
 
-## Project setup
+Create a new project using this template:
 
 ```bash
-$ npm install
+npx degit marco0antonio0/template_nest_netlify my-project
 ```
 
-## Compile and run the project
+Install dependencies:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+cd my-project
+npm install
 ```
 
-## Run tests
+Run locally with Netlify CLI:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install -g netlify-cli
+netlify dev
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 📂 File Structure
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### `src/main.ts`
+```ts
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();
+```
+> **Purpose**: Default NestJS entry point for local execution (`npm run start:dev`).  
+> On Netlify, it is not used directly because the bootstrap is done in `netlify/functions/nest.ts`.
+
+---
+
+### `netlify/functions/nest.ts`
+```ts
+import 'reflect-metadata';
+import { NestFactory } from '@nestjs/core';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import express from 'express';
+import serverless from 'serverless-http';
+import { AppModule } from '../../src/app.module';
+```
+> **Purpose**:  
+> - Adapts the NestJS app to run in a **serverless** environment using `serverless-http`.  
+> - Sets `app.setGlobalPrefix('api')` so all endpoints are under `/api/...`.  
+> - Uses caching to avoid recreating the server on each invocation (improves warm start performance).  
+> - Exports `handler`, which is the function Netlify calls for each request.
+
+---
+
+### `src/app.module.ts`
+```ts
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+
+@Module({
+  imports: [],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+> **Purpose**: Root module of the NestJS app.  
+> - Registers controllers and providers.  
+> - In this template, only `AppController` and `AppService` are configured.
+
+---
+
+### `src/app.controller.ts`
+```ts
+import { Controller, Get } from '@nestjs/common';
+
+@Controller()
+export class AppController {
+  @Get('health')
+  getHeath() {
+    return { status: 'up' };
+  }
+}
+```
+> **Purpose**:  
+> - Defines application routes.  
+> - In this template, it has a `GET /api/health` route that returns `{ status: 'up' }` as an example.
+
+---
+
+## 🔗 Default endpoints in the template
+- **GET `/api/health`** → Returns the API status.
+
+---
+
+## 🛠️ Technologies used
+- [NestJS](https://nestjs.com/) — Progressive Node.js framework.
+- [Express](https://expressjs.com/) — HTTP server used by NestJS.
+- [serverless-http](https://github.com/dougmoscrop/serverless-http) — Adapts Express for serverless environments.
+- [Netlify Functions](https://docs.netlify.com/functions/overview/) — Netlify's serverless functions.
+
+---
+
+## 📌 Notes
+- To add new routes, create new **controllers** in `src/` and they will be automatically available under the `/api/` prefix.
+- In production, **Netlify** uses the `netlify/functions/nest.ts` file as the entry point.
+- To change the `/api` prefix, update `app.setGlobalPrefix()` in `netlify/functions/nest.ts` and `netlify.toml`.
+
+---
+
+# Template NestJS para Netlify
+
+👋 **Bem-vindo(a)!**  
+Este projeto é um **template pronto** para você criar APIs usando **NestJS** e rodá-las de forma **serverless** na plataforma [Netlify](https://www.netlify.com/).  
+A ideia é fornecer uma base limpa, simples e funcional para que você possa começar rápido:  
+- Todos os endpoints ficam sob `/api/...`
+- Já vem com um endpoint de exemplo `/api/health` que retorna o status da aplicação
+- Estrutura organizada e fácil de expandir
+
+---
+> ---
+>
+> Exemplo: [https://template-nestjs.netlify.app/api/health](https://template-nestjs.netlify.app/api/health)
+>
+> ---
+
+## 🚀 Como usar este template
+
+Para criar um novo projeto usando este template:
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+npx degit marco0antonio0/template_nest_netlify meu-projeto
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Instale as dependências:
 
-## Resources
+```bash
+cd meu-projeto
+npm install
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+Para rodar localmente com o Netlify CLI:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+npm install -g netlify-cli
+netlify dev
+```
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 📂 Estrutura de Arquivos
 
-## Stay in touch
+### `src/main.ts`
+```ts
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();
+```
+> **Função**: Arquivo de entrada padrão do NestJS para execução local (`npm run start:dev`).  
+> No Netlify, não é utilizado diretamente, pois o bootstrap é feito pelo `netlify/functions/nest.ts`.
 
-## License
+---
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### `netlify/functions/nest.ts`
+```ts
+import 'reflect-metadata';
+import { NestFactory } from '@nestjs/core';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import express from 'express';
+import serverless from 'serverless-http';
+import { AppModule } from '../../src/app.module';
+```
+> **Função**:  
+> - Adapta a aplicação NestJS para rodar no formato **serverless** usando `serverless-http`.  
+> - Define `app.setGlobalPrefix('api')` para que todos os endpoints fiquem sob `/api/...`.  
+> - Usa cache para evitar recriar o servidor a cada invocação (melhorando performance).  
+> - Exporta `handler`, que é a função que o Netlify invoca para cada requisição.
+
+---
+
+### `src/app.module.ts`
+```ts
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+
+@Module({
+  imports: [],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+> **Função**: Módulo raiz do NestJS.  
+> - Registra controladores (`controllers`) e provedores (`providers`).  
+> - No template, apenas o `AppController` e `AppService` estão configurados.
+
+---
+
+### `src/app.controller.ts`
+```ts
+import { Controller, Get } from '@nestjs/common';
+
+@Controller()
+export class AppController {
+  @Get('health')
+  getHeath() {
+    return { status: 'up' };
+  }
+}
+```
+> **Função**:  
+> - Define as rotas da aplicação.  
+> - Neste template, há uma rota `GET /api/health` que retorna `{ status: 'up' }` como exemplo.
+
+---
+
+## 🔗 Endpoints padrão no template
+- **GET `/api/health`** → Retorna status da API.
+
+---
+
+## 🛠️ Tecnologias utilizadas
+- [NestJS](https://nestjs.com/) — Framework Node.js progressivo.
+- [Express](https://expressjs.com/) — Servidor HTTP usado pelo NestJS.
+- [serverless-http](https://github.com/dougmoscrop/serverless-http) — Adapta Express para ambientes serverless.
+- [Netlify Functions](https://docs.netlify.com/functions/overview/) — Funções serverless da Netlify.
+
+---
+
+## 📌 Observações
+- Para adicionar novas rotas, crie novos **controllers** no `src/` e eles estarão automaticamente disponíveis sob o prefixo `/api/`.
+- Para produção, o **Netlify** usará o arquivo `netlify/functions/nest.ts` como ponto de entrada.
+- Se quiser mudar o prefixo `/api`, altere o `app.setGlobalPrefix()` no `netlify/functions/nest.ts` e o `netlify.toml`.
+
+---
