@@ -1,15 +1,23 @@
 // netlify/functions/nest.ts
 import 'reflect-metadata';
-import type { Handler } from '@netlify/functions';
+import {
+  type Handler,
+  type HandlerEvent,
+  type HandlerContext,
+  type HandlerResponse,
+} from '@netlify/functions';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import express from 'express';
-import serverlessExpress from '@vendia/serverless-express';
+import serverless from 'serverless-http';
 import { AppModule } from '../../src/app.module';
 
-let cached: ReturnType<typeof serverlessExpress> | undefined;
+// Assinatura EXATA do handler da Netlify
+type NetlifyHandler = (event: HandlerEvent, context: HandlerContext) => Promise<HandlerResponse>;
 
-async function bootstrap() {
+let cached: NetlifyHandler | undefined;
+
+async function bootstrap(): Promise<NetlifyHandler> {
   if (cached) return cached;
 
   const expressApp = express();
@@ -19,18 +27,27 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log'],
   });
 
-  // CORS (ajuste origins se precisar)
+  // Habilite CORS se precisar
   app.enableCors();
 
-  // ⚠️ Sem prefixo global para evitar /api/api com o redirect do Netlify
+  // Evite prefixo global aqui (use redirect /api/* no netlify.toml)
   // app.setGlobalPrefix('api');
 
   await app.init();
-  cached = serverlessExpress({ app: expressApp });
+
+  const expressHandler = serverless(expressApp); // retorno é unknown para TS
+
+  cached = async (event, context) => {
+    context.callbackWaitsForEmptyEventLoop = false;
+    const result = await expressHandler(event, context);
+    // Garantimos ao TS que segue o contrato HandlerResponse
+    return result as unknown as HandlerResponse;
+  };
+
   return cached;
 }
 
 export const handler: Handler = async (event, context) => {
-  const server = await bootstrap();
-  return server(event, context);
+  const h = await bootstrap();
+  return h(event, context);
 };
