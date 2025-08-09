@@ -29,6 +29,8 @@ async function bootstrap(): Promise<NetlifyHandler> {
 
   // Habilite CORS se precisar
   app.enableCors();
+    
+  app.setGlobalPrefix('api');  
 
   // Evite prefixo global aqui (use redirect /api/* no netlify.toml)
   // app.setGlobalPrefix('api');
