@@ -1,8 +1,15 @@
 [functions]
   node_bundler = "esbuild"
-  included_files = ["dist/**"]
+  # se quiser que o esbuild não exija módulos opcionais do Nest:
+  ignored_node_modules = [
+    "class-transformer",
+    "class-validator",
+    "@nestjs/websockets",
+    "@nestjs/websockets/socket-module",
+    "@nestjs/microservices",
+    "@nestjs/microservices/microservices-module"
+  ]
 
-# Envie tudo que bate em /api para a Function "nest"
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/nest/:splat"

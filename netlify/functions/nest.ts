@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import type { Handler } from '@netlify/functions';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import * as express from 'express';
+import express from 'express';
 import serverlessExpress from '@vendia/serverless-express';
 import { AppModule } from '../../src/app.module';
 
@@ -19,18 +19,17 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log'],
   });
 
-  // Habilite se precisar de CORS
+  // CORS (ajuste origins se precisar)
   app.enableCors();
 
-  // Se você usa prefixo global, comente ou ajuste o redirect no netlify.toml
-  app.setGlobalPrefix('api');
+  // ⚠️ Sem prefixo global para evitar /api/api com o redirect do Netlify
+  // app.setGlobalPrefix('api');
 
   await app.init();
   cached = serverlessExpress({ app: expressApp });
   return cached;
 }
 
-// Netlify Functions usam handler (aws-lambda compat)
 export const handler: Handler = async (event, context) => {
   const server = await bootstrap();
   return server(event, context);
