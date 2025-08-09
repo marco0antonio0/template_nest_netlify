@@ -1,0 +1,9 @@
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["dist/**"]
+
+# Envie tudo que bate em /api para a Function "nest"
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/nest/:splat"
+  status = 200
