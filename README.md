@@ -45,6 +45,7 @@ Run locally with Netlify CLI:
 
 ```bash
 npm install -g netlify-cli
+npm run build
 netlify dev
 ```
 

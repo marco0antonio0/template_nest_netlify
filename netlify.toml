@@ -1,21 +1,17 @@
-[functions]
-  node_bundler = "esbuild"
-  ignored_node_modules = [
-    "class-transformer",
-    "class-validator",
-    "@nestjs/websockets",
-    "@nestjs/websockets/socket-module",
-    "@nestjs/microservices",
-    "@nestjs/microservices/microservices-module"
-  ]
+[build]
+  command = "npm ci && npm run build"          
+  functions = "netlify/functions"
 
-# "/api" exato → encaminha para "/.netlify/functions/nest/api"
+[functions]
+  node_bundler = "nft"                
+  included_files = ["dist/**", ".env"]
+  external_node_modules = ["mysql2"]
+
 [[redirects]]
   from = "/api"
   to = "/.netlify/functions/nest/api"
   status = 200
 
-# "/api/*" → mantém o prefixo dentro da Function
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/nest/api/:splat"
