@@ -1,11 +1,10 @@
 [build]
-  command = "npm ci && npm run build"          
+  command = "npm run build"          
   functions = "netlify/functions"
 
 [functions]
   node_bundler = "nft"                
-  included_files = ["dist/**", ".env"]
-  external_node_modules = ["mysql2"]
+  included_files = ["dist/**"]
 
 [[redirects]]
   from = "/api"
